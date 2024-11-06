@@ -91,8 +91,8 @@ with st.sidebar:
     st.title("📅 Nave1/CNC Dashboard")
     default_month_index = months.index(cm) - 1
     default_years_index = years.index(cy)
-    selected_month = st.sidebar.selectbox('Selecciones Mes', months, index=default_month_index)
-    selected_year = st.sidebar.selectbox('Selecciones Año', years, index=default_years_index)
+    selected_month = st.sidebar.selectbox('Seleccione Mes', months, index=default_month_index)
+    selected_year = st.sidebar.selectbox('Seleccione Año', years, index=default_years_index)
 
 # --- Process the data ---
 df = create_dataframe_from_items(items)
@@ -175,8 +175,7 @@ with st.expander("Perforaciones", expanded=False):
 
     st.text("""Note: 
     - (Maximo, Media)
-    - El fondo de la fila cambia cuando cambia el valor de espesor.
-    - Las celdas se resaltan basadas en ciertas condiciones.""")
+    - El fondo de la fila cambia cuando cambia el valor de espesor.""")
 
 
 # ... (Your existing code for the dashboard) ...

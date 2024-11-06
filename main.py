@@ -175,9 +175,10 @@ with st.expander("Perforaciones", expanded=False):
 
     st.text("""Note: 
     - (Maximo, Media)
-    - Row background changes when espesor value changes.
-    - Cells are highlighted based on certain conditions.
-    - Headers are styled for better visibility.""")
+    - El fondo de la fila cambia cuando cambia el valor de espesor.
+    - Las celdas se resaltan basadas en ciertas condiciones.
+    - Los encabezados están estilizados para una mejor visibilidad. """)
+
 
 # ... (Your existing code for the dashboard) ...
 

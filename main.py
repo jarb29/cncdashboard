@@ -101,7 +101,7 @@ filtered_df_steelk = filter_by_year_month(df, selected_year, selected_month, 'st
 
 # --- Overview Section ---
 st.markdown("<div class='stHeader'><h1>Kupfer Nave1/CNC Dashboard</h1></div>", unsafe_allow_html=True)
-st.write("This dashboard provides insights into the CNC operations at Kupfer Nave1.")
+st.write("Produccion CNC en la Nave1.")
 
 # --- Key Performance Indicators (KPIs) ---
 espesor_progress = filter_rows_by_column_value(filtered_df_sabimet, 'origen', 'Progreso', reset_index=True)
@@ -141,7 +141,7 @@ with col2:
 with col3:
     st.metric("Average mm/day on M3", f"{round(avg_mm_m3, 2)}")
 # --- Perforaciones Grid Visualization ---
-with st.expander("Perforation Data Grid Visualization", expanded=False):
+with st.expander("Perforaciones", expanded=False):
 
 
 

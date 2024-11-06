@@ -176,8 +176,7 @@ with st.expander("Perforaciones", expanded=False):
     st.text("""Note: 
     - (Maximo, Media)
     - El fondo de la fila cambia cuando cambia el valor de espesor.
-    - Las celdas se resaltan basadas en ciertas condiciones.
-    - Los encabezados están estilizados para una mejor visibilidad. """)
+    - Las celdas se resaltan basadas en ciertas condiciones.""")
 
 
 # ... (Your existing code for the dashboard) ...

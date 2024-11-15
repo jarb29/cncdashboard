@@ -180,7 +180,7 @@ def display_metrics(column, prefix, avg_value, total_value, days_value, perfo_va
             {prefix}
         </div>
         <div>
-            <span class="metric-icon">📊</span>Promedio. mm/day: {round(avg_value, 2)} mm
+            <span class="metric-icon">📊</span>mm/day: {round(avg_value, 2)} mm
         </div>
         <div class="metric-divider"></div>
         <div>

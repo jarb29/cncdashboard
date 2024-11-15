@@ -1,6 +1,8 @@
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
+import pandas as pd
+from decimal import Decimal
 
 
 def get_months_and_years_since(date_str):
@@ -40,25 +42,23 @@ def filter_by_year_month(df, year, month, nego):
             filtered_items.append(row)
     return pd.DataFrame(filtered_items)
 
-
-
-def weighted_average_espesor(df):
+def filter_by_year_month_only(df, year, month):
     """
-    Function to calculate the weighted average of 'Espesor' with 'Programas cortados' as weights
-    :param df: DataFrame
-    :return: float - weighted average of 'Espesor'
+    Filters a DataFrame to include only rows where the 'Terminado' column matches
+    the specified year and month.
+
+    :param df: The input DataFrame.
+    :param year: The year to filter by.
+    :param month: The month to filter by.
+    :return: A DataFrame filtered by the specified year and month.
     """
-    columns_to_convert = ['perforaTotal', 'espesor']
-    for col in columns_to_convert:
-        df[col] = df[col].apply(lambda x: float(x) if isinstance(x, Decimal) else x)
-
-
-    total_programs = df['perforaTotal'].sum()
-    weighted_sum = (df['espesor'] * df['perforaTotal']).sum()
-    weighted_average = weighted_sum / total_programs
-
-    return weighted_average
-
+    # Ensure 'Terminado' is in datetime format
+    filtered_items = []
+    for index, row in df.iterrows():
+        close_at_date = row['Terminado']
+        if pd.to_datetime(close_at_date).year == year and pd.to_datetime(close_at_date).month == month:
+            filtered_items.append(row)
+    return pd.DataFrame(filtered_items)
 
 
 
@@ -115,89 +115,6 @@ def create_dataframe_from_items(items):
 
     return df
 
-
-def filter_drop_duplicates_groupby_and_aggregate(df, column_name, value, agg_dict):
-    """
-    Filters the DataFrame based on the column name and value,
-    removes duplicate rows, groups by 'pv' and 'espesor',
-    and aggregates the grouped data.
-
-    Parameters:
-    - df: pandas.DataFrame
-    - column_name: str, name of the column to filter by
-    - value: value to filter the rows
-    - agg_dict: dict, dictionary specifying aggregation methods for columns
-
-    Returns:
-    - pandas.DataFrame containing the aggregated data
-    """
-    # Filter the DataFrame
-    filtered_df = df[df[column_name] == value]
-
-    # Drop duplicate rows
-    filtered_dedup_df = filtered_df.drop_duplicates()
-
-    # Group by 'pv' and 'espesor'
-    grouped_df = filtered_dedup_df.groupby(['pv', 'espesor'])
-
-    # Aggregate the data
-    aggregated_df = grouped_df.agg(agg_dict)
-
-    return drop_zero_value_columns(aggregated_df.reset_index())
-
-
-
-def drop_zero_value_columns(df):
-    """
-    Drops columns from the DataFrame where all the values are zero.
-
-    Parameters:
-    - df: pandas.DataFrame
-
-    Returns:
-    - pandas.DataFrame with zero-value columns removed
-    """
-    # Identify columns where all values are zero
-    zero_value_columns = [col for col in df.columns if (df[col] == 0).all()]
-
-    # Drop these columns
-    df_dropped = df.drop(columns=zero_value_columns)
-
-    return df_dropped
-
-import pandas as pd
-from decimal import Decimal
-
-
-def group_by_espesor(df, espesor_list):
-    # Example column conversions, assuming espesor, placas, and cantidadPerforacionesPlacas need conversion
-    df = df.drop(columns=['pv'])
-    df['espesor'] = df['espesor'].apply(lambda x: float(x) if isinstance(x, Decimal) else x)
-    df['placas'] = df['placas'].apply(lambda x: float(x) if isinstance(x, Decimal) else x)
-    df['cantidadPerforacionesPlacas'] = df['cantidadPerforacionesPlacas'].apply(
-        lambda x: float(x) if isinstance(x, Decimal) else x)
-
-    df['mm_total'] = df['espesor'] * df['perforaTotal']
-    df['Perforaciones'] = df['perforaTotal']
-    df['espesor'] = pd.to_numeric(df['espesor'], errors='coerce')
-
-    # Sort espesor_list to ensure correct interval creation
-    espesor_list = sorted(espesor_list)
-
-    # Create intervals based on espesor_list with inclusive upper bounds
-    intervals = [-float('inf')] + espesor_list
-    labels = [f'<= {espesor_list[0]}'] + [f'{espesor_list[i - 1]} < esp <= {espesor_list[i]}' for i in
-                                          range(1, len(espesor_list))]
-    labels.append(f'> {espesor_list[-1]}')
-
-    # Categorize espesor into groups
-    df['espesor_group'] = pd.cut(df['espesor'], bins=intervals + [float('inf')], labels=labels, right=True)
-
-    # Group by espesor_group and sum other columns
-    grouped_df = df.groupby('espesor_group', observed=False).sum().reset_index()
-    grouped_df = grouped_df.drop(columns=['espesor', 'cantidadPerforacionesPlacas', 'cantidadPerforacionesTotal'])
-
-    return  grouped_df
 
 
 
@@ -481,8 +398,6 @@ def calculate_max_average(df):
     result_df['avgPerfora'] = np.ceil(result_df['avgPerfora']).astype(int)
 
     return result_df
-
-import pandas as pd
 
 
 

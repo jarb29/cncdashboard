@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import pandas as pd
 from decimal import Decimal
-
+import numpy as np
 
 def get_months_and_years_since(date_str):
     initial_date = datetime.strptime(date_str, "%d/%m/%Y")
@@ -352,37 +352,7 @@ def expand_datetime_column(df, column_name):
 
 
 
-def drop_all_duplicate_dates(df, year_col, month_col, day_col):
-    """
-    Drops all rows with duplicate dates defined by year, month, and day columns.
 
-    Parameters:
-    df (pd.DataFrame): The DataFrame to operate on.
-    year_col (str): The name of the year column.
-    month_col (str): The name of the month column.
-    day_col (str): The name of the day column.
-
-    Returns:
-    pd.DataFrame: The DataFrame with all rows having duplicate dates dropped.
-    """
-    # Create a new column with the combined date
-    df['combined_date'] = pd.to_datetime(df[[year_col, month_col, day_col]])
-
-    # Find the counts of each unique date
-    date_counts = df['combined_date'].value_counts()
-
-    # Identify dates that are duplicates
-    duplicate_dates = date_counts[date_counts > 1].index
-
-    # Keep only rows that do not have a duplicate date
-    df = df[~df['combined_date'].isin(duplicate_dates)]
-
-    # Drop the temporary combined_date column
-    df = df.drop(columns=['combined_date'])
-
-    return df
-
-import numpy as np
 def calculate_max_average(df):
     # Group by 'tipoMecanizado', 'maquina', and 'espesor'
     grouped_df = df.groupby(['tipoMecanizado', 'maquina', 'espesor'])

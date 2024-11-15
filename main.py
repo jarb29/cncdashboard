@@ -1,6 +1,5 @@
 import boto3
 import streamlit as st
-
 from util_functions import *  # Import all functions from util_functions.py
 
 # Initialize DynamoDB resource
@@ -105,9 +104,7 @@ st.markdown("<div class='stHeader'><h1>Kupfer Nave1/CNC Dashboard</h1></div>", u
 # --- Key Performance Indicators (KPIs) ---
 espesor_progress = filter_rows_by_column_value(filtered_df, 'origen', 'Progreso', reset_index=True)
 espesor_total = expand_datetime_column(espesor_progress, 'progress_createdAt')
-perfora_total = group_and_sum(espesor_total, ['year', 'month', 'day', 'tipoMecanizado', 'espesor'], 'perforaTotal')
-df_no_duplicates = drop_all_duplicate_dates(perfora_total, 'year', 'month', 'day')
-
+perfora_total = group_and_sum(espesor_total, ['tipoMecanizado', 'espesor'], 'perforaTotal')
 
 espesor_m1 = filter_rows_by_column_value(espesor_progress, 'maquina', 'm1', reset_index=True)
 perforaciones_m1 = group_and_sum(espesor_m1, ['tipoMecanizado', 'espesor'], 'perforaTotal')
@@ -245,13 +242,15 @@ display_total_metric(total_col4, "Perforaciones", total_perfo, "🔧")
 
 # --- Perforaciones Grid Visualization ---
 with st.expander("Perfil General Perforaciones", expanded=False):
+    df_total = filter_rows_by_column_value(df, 'origen', 'Progreso', reset_index=True)
+    df_total = expand_datetime_column(df_total, 'progress_createdAt')
 
     columns_to = [
         'pv', 'Inicio', 'cantidadPerforacionesTotal', 'Terminado', 'cantidadPerforacionesPlacas',
         'kg', 'progress_createdAt', 'origen', 'placas', 'hora_reporte', 'tiempo', 'tiempo_seteo', 'negocio',
         'Tiempo Proceso (min)', 'minute'
     ]
-    perforaciones_day_tipo = (espesor_total.drop_duplicates(subset=['Tiempo Proceso (min)'], keep='first')).drop(
+    perforaciones_day_tipo = ( df_total.drop_duplicates(subset=['Tiempo Proceso (min)'], keep='first')).drop(
         columns=columns_to)
     perforaciones_day_tipo = calculate_max_average(perforaciones_day_tipo)
     grid = create_perfora_grid(perforaciones_day_tipo)
@@ -326,8 +325,10 @@ with st.expander("Perforaciones por Maquina", expanded=False):
 
     # Create a single column (full width) for "GENERAL PERFIL"
     st.subheader("PERFIL GENERAL")
+    # --- Key Performance Indicators (KPIs) ---
 
-    df_perfil_tipoM = group_and_avg(df_no_duplicates, ['tipoMecanizado', 'espesor'],
+
+    df_perfil_tipoM = group_and_avg(perfora_total, ['tipoMecanizado', 'espesor'],
                                        'perforaTotal').sort_values('perforaTotal',
                                                                    ascending=False).reset_index(drop=True)
     # Apply the same styling and st.dataframe() to df_perfil_tipoM_m3

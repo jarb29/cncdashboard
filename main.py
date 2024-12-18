@@ -84,7 +84,7 @@ div[data-testid="metric-container"] > div[data-testid="stMetricValue"] {
 
 # --- Sidebar setup ---
 with st.sidebar:
-    st.sidebar.image("data/logo.png", use_column_width=True)
+    st.sidebar.image("data/logo.png", use_container_width=True)
     st.title("📅 Nave1/CNC Dashboard")
     default_month_index = months.index(cm) - 1
     default_years_index = years.index(cy)

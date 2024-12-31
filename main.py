@@ -103,12 +103,13 @@ st.markdown("<div class='stHeader'><h1>Kupfer Nave1/CNC Dashboard</h1></div>", u
 
 # --- Key Performance Indicators (KPIs) ---
 espesor_progress = filter_rows_by_column_value(filtered_df, 'origen', 'Progreso', reset_index=True)
+
 espesor_total = expand_datetime_column(espesor_progress, 'progress_createdAt')
 perfora_total = group_and_sum(espesor_total, ['tipoMecanizado', 'espesor'], 'perforaTotal')
 mm_T = espesor_total['espesor'] * espesor_total['perforaTotal']
-print(mm_T.sum(), "mm T")
 
 espesor_m1 = filter_rows_by_column_value(espesor_progress, 'maquina', 'm1', reset_index=True)
+
 perforaciones_m1 = group_and_sum(espesor_m1, ['tipoMecanizado', 'espesor'], 'perforaTotal')
 espesor_m1['mm_perforado'] = espesor_m1['espesor'] * espesor_m1['perforaTotal']
 
@@ -208,9 +209,9 @@ display_metrics(col3, "M3 Metrics", avg_mm_m3, total_mm_m3, divisor_mm_m3, perfo
 
 # Calculating total values
 total_avg_mm = (avg_mm_m1 + avg_mm_m2 + avg_mm_m3) / 3
-total_mm = mm_T.sum() # total_mm_m1 + total_mm_m2 + total_mm_m3
+total_mm = total_mm_m1 + total_mm_m2 + total_mm_m3
 total_days = divisor_mm_m1 + divisor_mm_m2 + divisor_mm_m3
-total_perfo =perfora_total['perforaTotal'].sum() # perfo_m1 + perfo_m2 + perfo_m3
+total_perfo =perfo_m1 + perfo_m2 + perfo_m3
 
 # Displaying total metrics in a new row
 st.markdown("<h3>Totales</h3>", unsafe_allow_html=True)

@@ -16,7 +16,6 @@ while 'LastEvaluatedKey' in response:
 
 # Get months and years since a particular date
 months, years, cm, cy = get_months_and_years_since("01/10/2024")
-
 # Streamlit configuration for the web app
 st.set_page_config(
     page_title="Dashboard/CNC",

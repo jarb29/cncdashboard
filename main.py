@@ -24,6 +24,16 @@ st.set_page_config(
     layout="wide"
 )
 
+def show_no_data_message(title, month, year):
+    st.markdown(f"""
+        <div class="no-data-message">
+            <div class="info-icon">ℹ️</div>
+            <h2>No hay datos disponibles para {title}</h2>
+            <p>No se encontraron registros para el mes {month} del año {year}.</p>
+            <p>Por favor, seleccione un período diferente o verifique que existan datos para este período.</p>
+        </div>
+    """, unsafe_allow_html=True)
+    
 # --- CSS Styling ---
 st.markdown("""
 <style>
@@ -169,7 +179,8 @@ def main():
     # --- Sabimet Analysis ---
     st.header("Sabimet Analysis")
     if filtered_df_sabimet.empty:
-        st.error("⚠️ No data available for Sabimet with the selected filters")
+
+        show_no_data_message("Sabimet", selected_month, selected_year)
     else:
         # Process Sabimet data
         filtered_df_sabimet['espesor'] = filtered_df_sabimet['espesor'].apply(Decimal)
@@ -187,7 +198,8 @@ def main():
     # --- Steelk Analysis ---
     st.header("Steelk Analysis")
     if filtered_df_steelk.empty:
-        st.error("⚠️ No data available for Steelk with the selected filters")
+       
+        show_no_data_message("Steelk", selected_month, selected_year)
     else:
         # Process Steelk data
         filtered_df_steelk['espesor'] = filtered_df_steelk['espesor'].apply(Decimal)

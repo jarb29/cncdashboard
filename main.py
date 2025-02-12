@@ -4,7 +4,7 @@ from util_functions import *  # Import all functions from util_functions.py
 
 # Initialize DynamoDB resource
 dynamo = boto3.resource('dynamodb', region_name='us-east-1')
-table = dynamo.Table('MECANIZADO_CLOSE2-dev')
+table = dynamo.Table('sam-stack-irlaa-MecanizadoCloseTable-1IKYW80FKFRII')
 
 # Scan the DynamoDB table and retrieve all items
 response = table.scan()
@@ -497,3 +497,4 @@ st.plotly_chart(fig)
 st.header("Tiempo Seteo/Placa Analysis")
 fig = sunburst_plot(df_negocio, ['negocio'] + group_columns, 'Negocio', 'tiempo_seteo')
 st.plotly_chart(fig)
+

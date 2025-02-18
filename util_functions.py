@@ -4,6 +4,9 @@ from datetime import datetime
 import pandas as pd
 from decimal import Decimal
 import numpy as np
+import base64
+from io import BytesIO
+
 
 def get_months_and_years_since(date_str):
     initial_date = datetime.strptime(date_str, "%d/%m/%Y")
@@ -67,7 +70,7 @@ def create_dataframe_from_items(items):
     columns = [
         'pv', 'Inicio', 'cantidadPerforacionesTotal', 'Terminado', 'cantidadPerforacionesPlacas', 'kg',
         'tipoMecanizado', 'progress_createdAt', 'origen', 'maquina', 'placas', 'hora_reporte', 'tiempo',
-        'tiempo_seteo', 'espesor', 'negocio'
+        'tiempo_seteo', 'espesor', 'negocio', 'cliente', 'posicion'
     ]
 
     rows = []
@@ -82,7 +85,9 @@ def create_dataframe_from_items(items):
             'cantidadPerforacionesPlacas': item['data']['cantidadPerforacionesPlacas'],
             'kg': item['data']['kg'],
             'tipoMecanizado': item['data']['tipoMecanizado'],
-            'espesor': item['data'].get('espesor', 0)  # Assuming 'espesor' comes from 'data' dictionary
+            'espesor': item['data'].get('espesor', 0),  # Assuming 'espesor' comes from 'data' dictionary
+            'cliente': item['data']['cliente'],
+            'posicion': item['posicion']
         }
 
         # Process each progress element
@@ -155,6 +160,36 @@ def group_and_average(df, group_columns, avg_column):
     grouped_df = df.groupby(group_columns, as_index=False)[avg_column].mean()
     grouped_df[avg_column] = grouped_df[avg_column].round(2)
     return grouped_df
+
+
+def group_and_sum_without_remove_columns(df, group_columns, avg_column):
+    """
+    Groups a DataFrame by specified columns and computes the sum of another column,
+    while preserving the other columns in the original DataFrame.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame to group.
+    - group_columns (list): A list of column names to group by.
+    - avg_column (str): The name of the column to compute the sum for.
+
+    Returns:
+    - pd.DataFrame: A DataFrame with the grouped columns, the sum values, and the remaining columns.
+    """
+
+    agg_dict = {col: 'first' for col in df.columns if col not in group_columns + [avg_column]}
+    agg_dict[avg_column] = 'sum'
+
+    # Group the DataFrame by the specified columns and compute the sum of the avg_column
+    # At the same time, keep the first occurrence of all other columns
+    grouped_df = df.groupby(group_columns, as_index=False).agg(agg_dict)
+
+    # Apply rounding to avg_column
+    grouped_df[avg_column] = grouped_df[avg_column].round(2)
+
+    return grouped_df
+
+
+
 
 
 
@@ -421,3 +456,27 @@ def highlight_espesor_change(df):
             color_switch = 'white' if color_switch == 'lightgrey' else 'lightgrey'
         bg_colors.iloc[i] = f'background-color: {color_switch}; color: black; text-align: center;'
     return bg_colors
+
+
+
+import pandas as pd
+import streamlit as st
+import base64
+from io import BytesIO
+
+
+def get_table_download_link(df):
+    """Generates a link allowing the data in a given pandas dataframe to be downloaded
+    in:  dataframe
+    out: href string
+    """
+    towrite = BytesIO()
+    df.to_excel(towrite, index=False, sheet_name='Sheet1')  # write to BytesIO object
+    towrite.seek(0)  # go to the start of the BytesIO object
+    b64 = base64.b64encode(towrite.read()).decode()  # encode to base64 (strings <-> bytes conversions)
+    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="download.xlsx">Download excel file</a>'
+
+
+
+
+

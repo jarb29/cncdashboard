@@ -155,6 +155,7 @@ filtered_df_steelk = filter_by_year_month(df, selected_year, selected_month, 'st
 filtered_df = filter_by_year_month_only(df, selected_year, selected_month)
 
 
+
 if not filtered_df.empty:
     # --- Overview Section ---
     st.markdown("<div class='stHeader'><h1>Kupfer Nave1/CNC Dashboard</h1></div>", unsafe_allow_html=True)
@@ -162,9 +163,29 @@ if not filtered_df.empty:
 
     # --- Key Performance Indicators (KPIs) ---
     espesor_progress = filter_rows_by_column_value(filtered_df, 'origen', 'Progreso', reset_index=True)
+    print(espesor_progress.columns)
+    # total_columns ['pv', 'Inicio', 'cantidadPerforacionesTotal', 'Terminado',
+    #    'cantidadPerforacionesPlacas', 'kg', 'tipoMecanizado',
+    #    'progress_createdAt', 'origen', 'maquina', 'placas', 'hora_reporte',
+    #    'tiempo', 'tiempo_seteo', 'espesor', 'negocio', 'cliente',
+    #    'perforaTotal', 'Tiempo Proceso (min)']
 
+    columns_to_drop_download = [ 'Inicio','progress_createdAt', 'origen', 'maquina', 'tiempo', 'tiempo_seteo', 'hora_reporte',
+                                 'Tiempo Proceso (min)']
+    columns_to_drop_download2 = [ 'cantidadPerforacionesTotal']
+    df_to_download = espesor_progress.drop(columns=columns_to_drop_download)
+
+    df_to_download2 = group_and_sum_without_remove_columns(df_to_download, ['pv', 'posicion'], 'perforaTotal')
+
+    df_to_download2 = df_to_download2.drop(columns=columns_to_drop_download2)
+    # Add the download button for DataFrame
+    df_to_download2['Terminado'] = df_to_download2['Terminado'].dt.strftime('%Y-%m-%d')
+    st.markdown(get_table_download_link(df_to_download2), unsafe_allow_html=True)
     espesor_total = expand_datetime_column(espesor_progress, 'progress_createdAt')
-    perfora_total = group_and_sum(espesor_total, ['tipoMecanizado', 'espesor'], 'perforaTotal')
+
+    perfora_total = group_and_sum(espesor_total, ['t'
+                                                  'ipoMecanizado', 'espesor'], 'perforaTotal')
+
     mm_T = espesor_total['espesor'] * espesor_total['perforaTotal']
 
     espesor_m1 = filter_rows_by_column_value(espesor_progress, 'maquina', 'm1', reset_index=True)
@@ -468,18 +489,18 @@ def display_summed_metrics_single_row(prefix, perfo_sum, mm_sum):
 # --- Sabimet Analysis ---
 if not filtered_df_sabimet.empty:
     st.header("Sabimet Analysis")
-    
+
     # Data preprocessing
     filtered_df_sabimet['espesor'] = filtered_df_sabimet['espesor'].apply(Decimal)
     filtered_df_sabimet['mm totales'] = filtered_df_sabimet['perforaTotal'].apply(Decimal) * filtered_df_sabimet['espesor']
-    
+
     # Calculate metrics
     perfora_filtered_df_sabimet = filtered_df_sabimet['perforaTotal'].sum()
     mm_filtered_df_sabimet = filtered_df_sabimet['mm totales'].sum()
-    
+
     # Display metrics
     display_summed_metrics_single_row("Sabimet", perfora_filtered_df_sabimet, mm_filtered_df_sabimet)
-    
+
     # Process time analysis
     columns_to_drop = [
         'Inicio', 'cantidadPerforacionesTotal', 'Terminado', 'cantidadPerforacionesPlacas',
@@ -487,7 +508,7 @@ if not filtered_df_sabimet.empty:
         'hora_reporte', 'tiempo', 'tiempo_seteo', 'espesor', 'negocio', 'perforaTotal',
         'Tiempo Proceso (min)'
     ]
-    
+
     df_sabimet_process_time = (filtered_df_sabimet
         .drop_duplicates(subset=['Tiempo Proceso (min)'], keep='first')
         .assign(Tiempo_Proceso_Dias=lambda x: (x['Tiempo Proceso (min)'] / (60 * 24)).round(2))
@@ -495,17 +516,17 @@ if not filtered_df_sabimet.empty:
         .groupby('pv', as_index=False)['Tiempo_Proceso_Dias'].sum()
         .sort_values('Tiempo_Proceso_Dias', ascending=False)
         .reset_index(drop=True))
-    
+
     # Group and plot data
     grouped_df_sabimet = (group_and_sum(filtered_df_sabimet, ['pv', 'espesor'], 'placas')
         .groupby(['pv', 'espesor'], as_index=False)['placas'].sum()
         .sort_values('placas', ascending=False)
         .reset_index(drop=True))
-    
+
     # Create and display plots
     fig = bar_plot_with_hover_info(grouped_df_sabimet)
     st.plotly_chart(fig)
-    
+
     st.header("Sabimet Procesos")
     fig = bar_plot_with_hover_process(df_sabimet_process_time)
     st.plotly_chart(fig)
@@ -515,18 +536,18 @@ else:
 # --- Steelk Analysis ---
 if not filtered_df_steelk.empty:
     st.header("Steelk Analysis")
-    
+
     # Data preprocessing
     filtered_df_steelk['espesor'] = filtered_df_steelk['espesor'].apply(Decimal)
     filtered_df_steelk['mm totales'] = filtered_df_steelk['perforaTotal'].apply(Decimal) * filtered_df_steelk['espesor']
-    
+
     # Calculate metrics
     perfo_filtered_df_steelk = filtered_df_steelk['perforaTotal'].sum()
     mm_filtered_df_steelk = filtered_df_steelk['mm totales'].sum()
-    
+
     # Display metrics
     display_summed_metrics_single_row("Steelk", perfo_filtered_df_steelk, mm_filtered_df_steelk)
-    
+
     # Process time analysis
     df_steelk_process_time = (filtered_df_steelk
         .drop_duplicates(subset=['Tiempo Proceso (min)'], keep='first')
@@ -535,17 +556,17 @@ if not filtered_df_steelk.empty:
         .groupby('pv', as_index=False)['Tiempo_Proceso_Dias'].sum()
         .sort_values('Tiempo_Proceso_Dias', ascending=False)
         .reset_index(drop=True))
-    
+
     # Group and plot data
     grouped_df_steelk = (group_and_sum(filtered_df_steelk, ['pv', 'espesor'], 'placas')
         .groupby(['pv', 'espesor'], as_index=False)['placas'].sum()
         .sort_values('placas', ascending=False)
         .reset_index(drop=True))
-    
+
     # Create and display plots
     fig = bar_plot_with_hover_info(grouped_df_steelk)
     st.plotly_chart(fig)
-    
+
     st.header("Steelk Procesos")
     fig = bar_plot_with_hover_process(df_steelk_process_time)
     st.plotly_chart(fig)

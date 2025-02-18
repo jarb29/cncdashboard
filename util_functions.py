@@ -471,5 +471,5 @@ def get_table_download_link(df, year, month):
     filename = f"cnc_{year}_{month}.xlsx"
 
     # return as button instead of link
-    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{filename}"><button style="color: black; background-color: #ff6347; border: none; border-radius: 15px; padding: 10px 20px;">Download Excel file</button></a>'
+    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{filename}"><button style="color: black; background-color: #ff6347; border: none; border-radius: 15px; padding: 10px 20px;">Download {year} - {month}</button></a>'
 

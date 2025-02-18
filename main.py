@@ -172,7 +172,7 @@ if not filtered_df.empty:
 
     columns_to_drop_download = [ 'Inicio','progress_createdAt', 'origen', 'maquina', 'tiempo', 'tiempo_seteo', 'hora_reporte',
                                  'Tiempo Proceso (min)']
-    columns_to_drop_download2 = [ 'cantidadPerforacionesTotal']
+    columns_to_drop_download2 = [ 'cantidadPerforacionesTotal', 'posicion']
     df_to_download = espesor_progress.drop(columns=columns_to_drop_download)
 
     df_to_download2 = group_and_sum_without_remove_columns(df_to_download, ['pv', 'posicion'], 'perforaTotal')

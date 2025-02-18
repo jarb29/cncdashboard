@@ -180,7 +180,9 @@ if not filtered_df.empty:
     df_to_download2 = df_to_download2.drop(columns=columns_to_drop_download2)
     # Add the download button for DataFrame
     df_to_download2['Terminado'] = df_to_download2['Terminado'].dt.strftime('%Y-%m-%d')
-    st.markdown(get_table_download_link(df_to_download2), unsafe_allow_html=True)
+
+    st.markdown(get_table_download_link(df_to_download2, selected_year, selected_month), unsafe_allow_html=True)
+
     espesor_total = expand_datetime_column(espesor_progress, 'progress_createdAt')
 
     perfora_total = group_and_sum(espesor_total, ['t'

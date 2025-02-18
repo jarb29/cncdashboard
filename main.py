@@ -175,7 +175,7 @@ if not filtered_df.empty:
     columns_to_drop_download2 = [ 'cantidadPerforacionesTotal', 'posicion']
     df_to_download = espesor_progress.drop(columns=columns_to_drop_download)
 
-    df_to_download2 = group_and_sum_without_remove_columns(df_to_download, ['pv', 'posicion'], 'perforaTotal')
+    df_to_download2 = group_and_sum_without_remove_columns(df_to_download, ['pv'], 'perforaTotal')
 
     df_to_download2 = df_to_download2.drop(columns=columns_to_drop_download2)
     # Add the download button for DataFrame

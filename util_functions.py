@@ -194,7 +194,7 @@ def group_and_sum_without_remove_columns(df, group_columns, avg_column,     cols
         'cantidadPerforacionesPlacas': 'Perforaciones por Placa',
         'perforaTotal': 'Total de Perforaciones'
     })
-    grouped_df['mm de perforado'] = grouped_df['total de perforaciones'] * grouped_df['espesor']
+    grouped_df['mm de perforado'] = grouped_df['Total de Perforaciones'] * grouped_df['espesor']
     grouped_df.reset_index(inplace=True)
     return grouped_df
 

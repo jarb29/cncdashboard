@@ -162,7 +162,7 @@ def group_and_average(df, group_columns, avg_column):
     return grouped_df
 
 
-def group_and_sum_without_remove_columns(df, group_columns, avg_column):
+def group_and_sum_without_remove_columns(df, group_columns, avg_column,     cols_to_convert = ['cantidadPerforacionesPlacas', 'kg', 'placas', 'espesor', 'perforaTotal']):
     """
     Groups a DataFrame by specified columns and computes the sum of another column,
     while preserving the other columns in the original DataFrame.
@@ -185,7 +185,15 @@ def group_and_sum_without_remove_columns(df, group_columns, avg_column):
 
     # Apply rounding to avg_column
     grouped_df[avg_column] = grouped_df[avg_column].round(2)
-
+    for col in cols_to_convert:
+        if col in grouped_df.columns:
+            # If the column is not numeric, convert it
+            if grouped_df[col].dtype != np.number:
+                grouped_df[col] = pd.to_numeric(grouped_df[col], errors='coerce')
+    grouped_df = grouped_df.rename(columns={
+        'cantidadPerforacionesPlacas': 'Perforaciones por Placa',
+        'perforaTotal': 'Total de Perforaciones'
+    })
     return grouped_df
 
 

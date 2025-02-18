@@ -459,24 +459,17 @@ def highlight_espesor_change(df):
 
 
 
-import pandas as pd
-import streamlit as st
-import base64
-from io import BytesIO
-
-
 def get_table_download_link(df):
     """Generates a link allowing the data in a given pandas dataframe to be downloaded
-    in:  dataframe
+    in: dataframe
     out: href string
     """
     towrite = BytesIO()
     df.to_excel(towrite, index=False, sheet_name='Sheet1')  # write to BytesIO object
     towrite.seek(0)  # go to the start of the BytesIO object
     b64 = base64.b64encode(towrite.read()).decode()  # encode to base64 (strings <-> bytes conversions)
-    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="download.xlsx">Download excel file</a>'
 
-
-
+    # return as button instead of link
+    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="download.xlsx"><button style="color: black; background-color: #ff6347; border: none; border-radius: 15px; padding: 10px 20px;">Download Excel file</button></a>'
 
 

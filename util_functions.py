@@ -161,44 +161,32 @@ def group_and_average(df, group_columns, avg_column):
     grouped_df[avg_column] = grouped_df[avg_column].round(2)
     return grouped_df
 
+precio = {'sabimet': 226, 'steelk': 108}
 
-def group_and_sum_without_remove_columns(df, group_columns, avg_column,     cols_to_convert = ['cantidadPerforacionesPlacas', 'kg', 'placas', 'espesor', 'perforaTotal']):
-    """
-    Groups a DataFrame by specified columns and computes the sum of another column,
-    while preserving the other columns in the original DataFrame.
 
-    Parameters:
-    - df (pd.DataFrame): The DataFrame to group.
-    - group_columns (list): A list of column names to group by.
-    - avg_column (str): The name of the column to compute the sum for.
+def calculate_price(row):
+    return row['mm de perforado'] * precio.get(row['negocio'], 1)
 
-    Returns:
-    - pd.DataFrame: A DataFrame with the grouped columns, the sum values, and the remaining columns.
-    """
+
+def group_and_sum_without_remove_columns(df, group_columns, avg_column,
+                                         cols_to_convert=['cantidadPerforacionesPlacas', 'kg', 'placas', 'espesor',
+                                                          'perforaTotal']):
+    df[cols_to_convert] = df[cols_to_convert].apply(pd.to_numeric, errors='ignore')
 
     agg_dict = {col: 'first' for col in df.columns if col not in group_columns + [avg_column]}
     agg_dict[avg_column] = 'sum'
 
-    # Group the DataFrame by the specified columns and compute the sum of the avg_column
-    # At the same time, keep the first occurrence of all other columns
     grouped_df = df.groupby(group_columns, as_index=False).agg(agg_dict)
-
-    # Apply rounding to avg_column
     grouped_df[avg_column] = grouped_df[avg_column].round(2)
-    for col in cols_to_convert:
-        if col in grouped_df.columns:
-            # If the column is not numeric, convert it
-            if grouped_df[col].dtype != np.number:
-                grouped_df[col] = pd.to_numeric(grouped_df[col], errors='coerce')
+
     grouped_df = grouped_df.rename(columns={
         'cantidadPerforacionesPlacas': 'Perforaciones por Placa',
         'perforaTotal': 'Total de Perforaciones'
     })
     grouped_df['mm de perforado'] = grouped_df['Total de Perforaciones'] * grouped_df['espesor']
-    grouped_df.reset_index(inplace=True)
+    grouped_df['costo'] = grouped_df.apply(calculate_price, axis=1)
 
-    return grouped_df
-
+    return grouped_df.reset_index(drop=True)
 
 
 

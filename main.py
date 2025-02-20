@@ -135,18 +135,262 @@ def show_no_data_message(title, month, year):
     """, unsafe_allow_html=True)
 
 
-# --- Sidebar setup ---
+# --- Enhanced Sidebar with Light Effects ---
 with st.sidebar:
-    st.sidebar.image("data/logo.png", use_container_width=True)
-    st.title("📅 Nave1/CNC Dashboard")
-    if cm == 1:  # Assuming '1' corresponds to 'January'
-        default_month_index = months.index(cm)  # Leave as is
+    st.markdown("""
+        <style>
+        [data-testid=stSidebar] {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3e6e8 100%);
+        }
+        
+        /* Shimmer effect base */
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+        
+        /* Glow effect */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(78, 205, 196, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(78, 205, 196, 0.4); }
+            100% { box-shadow: 0 0 5px rgba(78, 205, 196, 0.2); }
+        }
+        
+        /* Light beam effect */
+        @keyframes lightBeam {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .logo-container {
+            position: relative;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            margin: 20px 0;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255,255,255,0.8),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: lightBeam 3s infinite;
+        }
+        
+        .logo-container:hover {
+            transform: translateY(-5px);
+            animation: glow 2s infinite;
+        }
+        
+        .dashboard-title {
+            position: relative;
+            background: linear-gradient(45deg, #2193b0, #6dd5ed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .dashboard-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.8),
+                transparent
+            );
+            animation: shimmer 3s infinite;
+        }
+        
+        .time-period-container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .time-period-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255,255,255,0.4),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+        
+        .time-period-container:hover::before {
+            animation: lightBeam 2s;
+        }
+        
+        .stSelectbox > div > div {
+            background: white !important;
+            border: 1px solid rgba(0,0,0,0.1) !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease;
+        }
+        
+        .stSelectbox > div > div:hover {
+            border-color: #2193b0 !important;
+            box-shadow: 0 0 15px rgba(33, 147, 176, 0.2) !important;
+        }
+        
+        .section-title {
+            color: #2193b0;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #2193b0, transparent);
+        }
+        
+        .info-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .info-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.8),
+                transparent
+            );
+            animation: shimmer 4s infinite;
+        }
+        
+        /* Custom scrollbar */
+        [data-testid=stSidebar]::-webkit-scrollbar {
+            width: 6px;
+            background: transparent;
+        }
+        
+        [data-testid=stSidebar]::-webkit-scrollbar-thumb {
+            background: rgba(33, 147, 176, 0.2);
+            border-radius: 3px;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Logo Section with light effects
+    st.markdown("""
+        <div class="logo-container">
+            <div style="position: relative;">
+    """, unsafe_allow_html=True)
+    st.image("data/logo.png", use_container_width=True)
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+    # Dashboard Title with shimmer
+    st.markdown("""
+        <div class="dashboard-title">
+            📊 Nave1/CNC Dashboard
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Time Period Section with light beam effect
+    st.markdown("""
+        <div class="time-period-container">
+            <div class="section-title">
+                <span>📅</span> Time Period
+            </div>
+    """, unsafe_allow_html=True)
+
+    # Month and Year Selection
+    if cm == 1:
+        default_month_index = months.index(cm)
     else:
-        default_month_index = months.index(cm) - 1  # Apply the formula
+        default_month_index = months.index(cm) - 1
 
     default_years_index = years.index(cy)
-    selected_month = st.sidebar.selectbox('Seleccione Mes', months, index=default_month_index)
-    selected_year = st.sidebar.selectbox('Seleccione Año', years, index=default_years_index)
+
+    selected_month = st.selectbox(
+        'Select Month',
+        months,
+        index=default_month_index,
+        key='month_selector'
+    )
+
+    selected_year = st.selectbox(
+        'Select Year',
+        years,
+        index=default_years_index,
+        key='year_selector'
+    )
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    # Info Section with shimmer effect
+    st.markdown("""
+        <div class="info-container">
+            <div class="section-title">
+                <span>ℹ️</span> Dashboard Info
+            </div>
+            <div style="color: #666; font-size: 14px;">
+                Last updated: Today<br>
+                Status: Live
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
 
 # --- Process the data ---
 df = create_dataframe_from_items(items)

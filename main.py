@@ -168,7 +168,7 @@ with st.sidebar:
         
         .logo-container {
             position: relative;
-            padding: 20px;
+            padding: 10px;
             background: white;
             border-radius: 15px;
             margin: 20px 0;
@@ -414,18 +414,51 @@ if not filtered_df.empty:
     #    'tiempo', 'tiempo_seteo', 'espesor', 'negocio', 'cliente',
     #    'perforaTotal', 'Tiempo Proceso (min)']
 
-    columns_to_drop_download = [ 'Inicio','progress_createdAt', 'origen', 'maquina', 'tiempo', 'tiempo_seteo', 'hora_reporte',
-                                 'Tiempo Proceso (min)']
-    columns_to_drop_download2 = [ 'cantidadPerforacionesTotal', 'posicion']
+    columns_to_drop_download = [ 'Inicio','progress_createdAt', 'origen', 'maquina', 'tiempo', 'tiempo_seteo',
+                                 'hora_reporte', 'Tiempo Proceso (min)']
+
+
+    columns_to_drop_download2 = [ 'cantidadPerforacionesTotal', 'posicion', 'kg','Perforaciones por Placa', 'placas',
+                                  'tipoMecanizado']
+
+    columns_to_drop_download3 = ['cantidadPerforacionesTotal', 'posicion', 'kg', 'tipoMecanizado']
+
     df_to_download = espesor_progress.drop(columns=columns_to_drop_download)
 
-    df_to_download2 = group_and_sum_without_remove_columns(df_to_download, ['pv'], 'perforaTotal')
+    df_to_download2 = group_and_sum_without_remove_columns(df_to_download,
+                                                           ['pv'],
+                                                           'perforaTotal')
+
+    df_to_download3 = group_and_sum_without_remove_columns(df_to_download,
+                                                           ['pv', 'cantidadPerforacionesPlacas', 'placas'],
+                                                           'perforaTotal')
+
+
 
     df_to_download2 = df_to_download2.drop(columns=columns_to_drop_download2)
+    df_to_download3 = df_to_download3.drop(columns=columns_to_drop_download3)
     # Add the download button for DataFrame
     df_to_download2['Terminado'] = df_to_download2['Terminado'].dt.strftime('%Y-%m-%d')
+    df_to_download3['Terminado'] = df_to_download3['Terminado'].dt.strftime('%Y-%m-%d')
 
-    st.markdown(get_table_download_link(df_to_download2, selected_year, selected_month), unsafe_allow_html=True)
+    with st.expander("Archivos para descargar", expanded=True):
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown(get_table_download_link(
+                df_to_download2,
+                selected_year,
+                selected_month,
+                'Resumen'
+            ), unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(get_table_download_link(
+                df_to_download3,
+                selected_year,
+                selected_month,
+                'Total'
+            ), unsafe_allow_html=True)
 
     espesor_total = expand_datetime_column(espesor_progress, 'progress_createdAt')
 

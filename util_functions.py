@@ -458,7 +458,7 @@ def highlight_espesor_change(df):
 
 
 
-def get_table_download_link(df, year, month):
+def get_table_download_link(df, year, month, name):
     """Generates a link allowing the data in a given pandas dataframe to be downloaded
     in: dataframe
     out: href string
@@ -467,8 +467,8 @@ def get_table_download_link(df, year, month):
     df.to_excel(towrite, index=False, sheet_name='Sheet1')  # write to BytesIO object
     towrite.seek(0)  # go to the start of the BytesIO object
     b64 = base64.b64encode(towrite.read()).decode()  # encode to base64 (strings <-> bytes conversions)
-    filename = f"cnc_{year}_{month}.xlsx"
+    filename = f"cnc_{name}_{year}_{month}.xlsx"
 
     # return as button instead of link
-    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{filename}"><button style="color: black; background-color: #ff6347; border: none; border-radius: 15px; padding: 10px 20px;">Download {year} - {month}</button></a>'
+    return f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="{filename}"><button style="color: black; background-color: #ff6347; border: none; border-radius: 15px; padding: 10px 20px;"> Descargar - {name} - {year} - {month}</button></a>'
 

@@ -168,27 +168,63 @@ def calculate_price(row):
     return row['mm de perforado'] * precio.get(row['negocio'], 1)
 
 
-def group_and_sum_without_remove_columns(df, group_columns, avg_column,
-                                         cols_to_convert=['cantidadPerforacionesPlacas', 'kg', 'placas', 'espesor',
-                                                          'perforaTotal']):
+def group_and_sum_without_remove_columns(df, group_columns, avg_columns,
+                                       cols_to_convert=['cantidadPerforacionesPlacas', 'kg', 'placas', 'espesor',
+                                                      'perforaTotal']):
+    # Convert specified columns to numeric
     df[cols_to_convert] = df[cols_to_convert].apply(pd.to_numeric, errors='ignore')
 
-    agg_dict = {col: 'first' for col in df.columns if col not in group_columns + [avg_column]}
-    agg_dict[avg_column] = 'sum'
+    # If avg_columns is a single string, convert it to a list
+    if isinstance(avg_columns, str):
+        avg_columns = [avg_columns]
 
+    # Create aggregation dictionary
+    # All columns get 'first' by default
+    agg_dict = {col: 'first' for col in df.columns}
+
+    # Override with 'sum' for the specified columns to aggregate
+    for col in avg_columns:
+        agg_dict[col] = 'sum'
+
+    # Perform groupby and aggregation
     grouped_df = df.groupby(group_columns, as_index=False).agg(agg_dict)
-    grouped_df[avg_column] = grouped_df[avg_column].round(2)
 
-    grouped_df = grouped_df.rename(columns={
-        'cantidadPerforacionesPlacas': 'Perforaciones por Placa',
-        'perforaTotal': 'Total de Perforaciones'
-    })
-    grouped_df['mm de perforado'] = grouped_df['Total de Perforaciones'] * grouped_df['espesor']
+    # Round the summed columns
+    for col in avg_columns:
+        grouped_df[col] = grouped_df[col].round(2)
+
+    # Calculate additional columns
+    grouped_df['mm de perforado'] = grouped_df['perforaTotal'] * grouped_df['espesor']
     grouped_df['costo'] = grouped_df.apply(calculate_price, axis=1)
 
     return grouped_df.reset_index(drop=True)
 
+def group_and_sum_without_remove_columns2(df, group_columns, avg_columns,
+                                       cols_to_convert=['cantidadPerforacionesPlacas', 'kg', 'placas', 'espesor',
+                                                      'perforaTotal']):
+    # Convert specified columns to numeric
+    df[cols_to_convert] = df[cols_to_convert].apply(pd.to_numeric, errors='ignore')
 
+    # If avg_columns is a single string, convert it to a list
+    if isinstance(avg_columns, str):
+        avg_columns = [avg_columns]
+
+    # Create aggregation dictionary
+    # All columns get 'first' by default
+    agg_dict = {col: 'first' for col in df.columns}
+
+    # Override with 'sum' for the specified columns to aggregate
+    for col in avg_columns:
+        agg_dict[col] = 'sum'
+
+    # Perform groupby and aggregation
+    grouped_df = df.groupby(group_columns, as_index=False).agg(agg_dict)
+
+    # Round the summed columns
+    for col in avg_columns:
+        grouped_df[col] = grouped_df[col].round(2)
+
+    return grouped_df.reset_index(drop=True)
 
 
 

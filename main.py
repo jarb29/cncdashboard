@@ -425,14 +425,28 @@ if not filtered_df.empty:
 
     df_to_download = espesor_progress.drop(columns=columns_to_drop_download)
 
-    df_to_download2 = group_and_sum_without_remove_columns(df_to_download,
-                                                           ['pv'],
-                                                           'perforaTotal')
+
 
     df_to_download3 = group_and_sum_without_remove_columns(df_to_download,
-                                                           ['pv', 'cantidadPerforacionesPlacas', 'placas'],
-                                                           'perforaTotal')
+                                                           ['pv', 'posicion'],
+                                                           ['perforaTotal'])
 
+    df_to_download2 = group_and_sum_without_remove_columns2(df_to_download3,
+                                                           ['pv'],
+                                                           ['perforaTotal',
+                                                            'mm de perforado', 'costo'])
+
+
+    # Rename columns
+    df_to_download2 = df_to_download2.rename(columns={
+        'cantidadPerforacionesPlacas': 'Perforaciones por Placa',
+        'perforaTotal': 'Total de Perforaciones'
+    })
+
+    df_to_download3 = df_to_download3.rename(columns={
+        'cantidadPerforacionesPlacas': 'Perforaciones por Placa',
+        'perforaTotal': 'Total de Perforaciones'
+    })
 
 
     df_to_download2 = df_to_download2.drop(columns=columns_to_drop_download2)

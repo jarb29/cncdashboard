@@ -227,7 +227,6 @@ def group_and_sum_without_remove_columns2(df, group_columns, avg_columns,
     return grouped_df.reset_index(drop=True)
 
 
-
 def group_and_sum(df, group_columns, avg_column):
     """
     Groups a DataFrame by specified columns and computes the average of another column.

@@ -448,7 +448,6 @@ if not filtered_df.empty:
         'perforaTotal': 'Total de Perforaciones'
     })
 
-
     df_to_download2 = df_to_download2.drop(columns=columns_to_drop_download2)
     df_to_download3 = df_to_download3.drop(columns=columns_to_drop_download3)
     # Add the download button for DataFrame

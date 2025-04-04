@@ -828,7 +828,12 @@ if not filtered_df_steelk.empty:
 
     # Display metrics
     display_summed_metrics_single_row("Steelk", perfo_filtered_df_steelk, mm_filtered_df_steelk)
-
+    columns_to_drop = [
+        'Inicio', 'cantidadPerforacionesTotal', 'Terminado', 'cantidadPerforacionesPlacas',
+        'kg', 'tipoMecanizado', 'progress_createdAt', 'origen', 'maquina', 'placas',
+        'hora_reporte', 'tiempo', 'tiempo_seteo', 'espesor', 'negocio', 'perforaTotal',
+        'Tiempo Proceso (min)'
+    ]
     # Process time analysis
     df_steelk_process_time = (filtered_df_steelk
         .drop_duplicates(subset=['Tiempo Proceso (min)'], keep='first')

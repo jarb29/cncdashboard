@@ -345,7 +345,6 @@ with st.sidebar:
             📊 Nave1/CNC Dashboard
         </div>
     """, unsafe_allow_html=True)
-
     # Time Period Section with light beam effect
     st.markdown("""
         <div class="time-period-container">

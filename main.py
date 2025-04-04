@@ -407,7 +407,7 @@ if not filtered_df.empty:
 
     # --- Key Performance Indicators (KPIs) ---
     espesor_progress = filter_rows_by_column_value(filtered_df, 'origen', 'Progreso', reset_index=True)
-    print(espesor_progress.columns)
+    # print(espesor_progress.columns)
     # total_columns ['pv', 'Inicio', 'cantidadPerforacionesTotal', 'Terminado',
     #    'cantidadPerforacionesPlacas', 'kg', 'tipoMecanizado',
     #    'progress_createdAt', 'origen', 'maquina', 'placas', 'hora_reporte',
@@ -429,7 +429,7 @@ if not filtered_df.empty:
 
     df_to_download3 = group_and_sum_without_remove_columns(df_to_download,
                                                            ['pv', 'posicion'],
-                                                           ['perforaTotal'])
+                                                           ['perforaTotal', 'placas'])
 
     df_to_download2 = group_and_sum_without_remove_columns2(df_to_download3,
                                                            ['pv'],

@@ -23,6 +23,7 @@ st.set_page_config(
     layout="wide"
 )
 
+
 # --- CSS Styling ---
 st.markdown("""
 <style>

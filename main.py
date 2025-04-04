@@ -166,17 +166,6 @@ with st.sidebar:
             100% { transform: translateX(100%) rotate(45deg); }
         }
         
-        .logo-container {
-            position: relative;
-            padding: 10px;
-            background: white;
-            border-radius: 15px;
-            margin: 20px 0;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        
         .logo-container::before {
             content: '';
             position: absolute;
@@ -201,17 +190,18 @@ with st.sidebar:
         
         .dashboard-title {
             position: relative;
-            background: linear-gradient(45deg, #2193b0, #6dd5ed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            background: #0a1f2b;  /* Using the darkest option */
+            color: white;
             font-size: 24px;
             font-weight: bold;
             text-align: center;
             padding: 20px 0;
             margin: 20px 0;
-            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(13, 43, 54, 0.3);
         }
         
+            
         .dashboard-title::after {
             content: '';
             position: absolute;
@@ -333,7 +323,7 @@ with st.sidebar:
 
     # Logo Section with light effects
     st.markdown("""
-        <div class="logo-container">
+        <div>
             <div style="position: relative;">
     """, unsafe_allow_html=True)
     st.image("data/logo.png", use_container_width=True)
